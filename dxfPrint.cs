@@ -15,52 +15,48 @@ namespace dxfLayoutsPrint
     {
         #region Commands
 
-        [CommandMethod("dxfprint")]
+        [CommandMethod("dxfp")]
         public void printDXF()
         {
+            //Get the current document and database
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Database database = doc.Database;
+            
+            // Get the layout dictionary of the current database
+            using (Transaction acadTrans = database.TransactionManager.StartTransaction())
+            {
+                //Get the name of layouts
+                DBDictionary lays =
+                    acadTrans.GetObject(database.LayoutDictionaryId,
+                        OpenMode.ForRead) as DBDictionary;
 
-            Database db = HostApplicationServices.WorkingDatabase;
-            Transaction trans = db.TransactionManager.StartTransaction();
-            BlockTable blkTbl = trans.GetObject(db.BlockTableId, OpenMode.ForRead) as BlockTable;
-            BlockTableRecord msBlkRec = trans.GetObject(blkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as
-            BlockTableRecord;
-            Point3d pnt1 = new Point3d(0, 0, 0);
-            Point3d pnt2 = new Point3d(10, 10, 0);
-            Line lineObj = new Line(pnt1, pnt2);
-            msBlkRec.AppendEntity(lineObj);
-            trans.AddNewlyCreatedDBObject(lineObj, true);
-            trans.Commit();
-            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
-            //ed.WriteMessage("\nLine Is Created Successfully.");
+                doc.Editor.WriteMessage("\nLayouts:");
 
-            PromptPointOptions prPtOpt = new PromptPointOptions("\nSpecify start point: ");
-            prPtOpt.AllowArbitraryInput = false;
-            prPtOpt.AllowNone = true;
+                // Step through and list each named layout and Model
+                foreach (DBDictionaryEntry item in lays)
+                {
+                    doc.Editor.WriteMessage("\n  " + item.m_value);
+                }
 
-            PromptPointResult prPtRes1 = ed.GetPoint(prPtOpt);
-            if (prPtRes1.Status != PromptStatus.OK) return;
-            pnt1 = prPtRes1.Value;
+                // Abort the changes to the database
+                acadTrans.Abort();
 
-            prPtOpt.BasePoint = pnt1;
-            prPtOpt.UseBasePoint = true;
-            prPtOpt.UseDashedLine = true;
-            prPtOpt.Message = "\nSpecify end point:";
-            PromptPointResult prPtRes2 = ed.GetPoint(prPtOpt);
-            if (prPtRes2.Status != PromptStatus.OK) return;
-            pnt2 = prPtRes2.Value;
 
-            AcDbLine line = new AcDbLine();
+
+                //print the required layouts
+            }
+            
         }
 
         #endregion
         public void Initialize()
         {
-            throw new NotImplementedException();
+           
         }
 
         public void Terminate()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
