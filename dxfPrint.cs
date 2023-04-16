@@ -52,7 +52,7 @@ namespace dxfLayoutsPrint
                 }
 
                 // Abort the changes to the database
-                //acTrans.Abort();
+                acTrans.Abort();
             }
         }
 
