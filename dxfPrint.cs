@@ -19,41 +19,24 @@ namespace dxfLayoutsPrint
         [CommandMethod("dxfp")]
         public void printDXF()
         {
+
+
             // Get the current document and database, and start a transaction
-            Document acDoc = Application.DocumentManager.MdiActiveDocument;
-            Database acCurDb = acDoc.Database;
+            DocumentCollection documents = Application.DocumentManager;
 
-            using (Transaction acTrans = acCurDb.TransactionManager.StartTransaction())
+            foreach (Document item in documents)
             {
-                // Reference the Layout Manager
-                LayoutManager acLayoutMgr = LayoutManager.Current;
-
-
-
-                DBDictionary lays =
-             acTrans.GetObject(acCurDb.LayoutDictionaryId,
-                 OpenMode.ForRead) as DBDictionary;
-
-                acDoc.Editor.WriteMessage("\nLayouts:");
-
-                // Step through and list each named layout and Model
-                foreach (DBDictionaryEntry item in lays)
+                //Database acCurDb = acDoc.Database;
+                string dwgName = item.Name;
+                using (var db = new Database(false, true))
                 {
-                   // acDoc.Editor.WriteMessage("\n  " + item.Key);
-                    
-                    // Get the current layout and output its name in the Command Line window
-                    Layout acLayout = acTrans.GetObject(item.m_value,OpenMode.ForRead) as Layout;
-                    
-                    if (acLayout.LayoutName!="Model")
-                    {
-                        acDoc.Editor.WriteMessage("\n  " + acLayout.LayoutName);
-                        
-                    }
-                }
-
-                // Abort the changes to the database
-                acTrans.Abort();
+                    db.ReadDwgFile(dwgName, FileOpenMode.OpenForReadAndAllShare, true, null);
+                    string dxfName = System.IO.Path.ChangeExtension(dwgName, "dxf");
+                    db.DxfOut(dxfName, 16, true);
+                } 
             }
+
+            
         }
 
         #endregion
