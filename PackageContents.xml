@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" ProductType="Application" Name="dxfOut" AppVersion="2023.1.1.1" Description="save all open documents into dxf extension" Author="Karim Isaac" ProductCode="{67412D1A-1B81-48BD-8A72-3EDCC623200D}" UpgradeCode="{0E594AD4-4728-4FED-B8D8-BF36B1F975EF}">
+	<CompanyDetails Name="Autodesk CAD" Phone="+2333791493"  Email="karim_isaac@hotmail.com" />
+	<Components>
+		<RuntimeRequirements OS="Win64" SeriesMin="R21.0" SeriesMax="R23.1"></RuntimeRequirements>
+		<ComponentEntry AppName="dxfLayoutsPrint" ModuleName="dxfLayoutsPrint.dll" 
+						AppDescription="save all open documents into dxf extension" 
+						LoadOnAutoCADStartup="True">
+		</ComponentEntry>
+	</Components>
+</ApplicationPackage>
+
+
